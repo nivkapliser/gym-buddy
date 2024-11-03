@@ -6,3 +6,4 @@ class Exercise(Enum):
     UNKNOWN = "Unknown Movement"
     SQUAT = "Squat"
     PUSHUP = "Push-up"
+    FFF = "Fff"
