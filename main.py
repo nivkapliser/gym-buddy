@@ -9,7 +9,7 @@ mp_pose = mp.solutions.pose
 # Queue to store recent limb positions (e.g., left ankle)
 trail_history = deque(maxlen=15)  # Adjust maxlen for trail length
 
-cap = cv2.VideoCapture(2)
+cap = cv2.VideoCapture(0)
 with mp_pose.Pose(
         min_detection_confidence=0.5,
         min_tracking_confidence=0.5, model_complexity=2) as pose:
