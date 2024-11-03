@@ -58,7 +58,7 @@ class DataCollector:
                 
             print(f"Processing {exercise_name} videos...")
             for video_file in tqdm(os.listdir(exercise_path)):
-                if not video_file.endswith(('.mp4', '.avi')):
+                if not video_file.endswith(('.mp4', '.avi', '.MOV')):
                     continue
                     
                 video_path = os.path.join(exercise_path, video_file)
