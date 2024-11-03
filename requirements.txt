@@ -1,0 +1,6 @@
+opencv-python-headless
+mediapipe
+tensorflow
+tensorflow-hub
+pandas
+joblib
