@@ -1,56 +1,71 @@
 import cv2
 import mediapipe as mp
 import numpy as np
-from ..models.data_models import Exercise
-from pathlib import Path
-from datetime import datetime
+import os
+from tqdm import tqdm
 
 class DataCollector:
     def __init__(self):
         self.mp_pose = mp.solutions.pose
         self.pose = self.mp_pose.Pose(
-            min_detection_confidence=0.7,
-            min_tracking_confidence=0.7
+            min_detection_confidence=0.5,
+            min_tracking_confidence=0.5
         )
-        self.data_dir = Path('data/training')
-        self.data_dir.mkdir(parents=True, exist_ok=True)
 
-    def collect_data(self, exercise: Exercise, num_samples: int = 100):
-        samples = []
-        cap = cv2.VideoCapture(0)
+    def extract_landmarks(self, frame):
+        frame_color = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+        results = self.pose.process(frame_color)
 
-        sample_count = 0
-        while sample_count < num_samples:
+        if results.pose_landmarks:
+            landmarks = [[lm.x, lm.y, lm.z] for lm in results.pose_landmarks.landmarks]
+            return np.array(landmarks).flatten
+        
+        return None
+    
+    def process_video(self, video_path):
+        cap = cv2.VideoCapture(video_path)
+        frames_data = []
+
+        while cap.isOpened():
             ret, frame = cap.read()
             if not ret:
                 break
 
-            image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-            results = self.pose.process(image)
-
-            if results.pose_landmarks:
-                self.draw_landmarks(frame, results)
-
-            cv2.putText(frame, f"Samples: {sample_count}/{num_samples}", 
-                       (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
-            cv2.imshow('Data Collection', frame)
-            
-            key = cv2.waitKey(1) & 0xFF
-            if key == ord('q'):
-                break
-            elif key == ord('c') and results.pose_landmarks:
-                # Save landmark data
-                landmarks_data = self.extract_landmarks(results.pose_landmarks)
-                samples.append({
-                    'landmarks': landmarks_data,
-                    'exercise': exercise.value,
-                    'timestamp': datetime.now().isoformat()
-                })
-                sample_count += 1
-                print(f"Captured sample {sample_count}")
+            landmarks = self.extract_landmarks(frame)
+            if landmarks is not None:
+                frames_data.append(landmarks)
         
         cap.release()
-        cv2.destroyAllWindows()
+        return np.array(frames_data)
+
+    def collect_data(self, data_dir):
+        dataset = []
+        labels = []
+
+        # exercise_videos/
+        #     squats/
+        #         video1.mp4
+        #         video2.mp4
+        #     pushups/
+        #         video1.mp4
+        #         video2.mp4
+        #     ...
         
-        # Save collected data
-        self.save_samples(samples, exercise)
+        for exercise_name in os.listdir(data_dir):
+            exercise_path = os.path.join(data_dir, exercise_name)
+            if not os.path.isdir(exercise_path):
+                continue
+                
+            print(f"Processing {exercise_name} videos...")
+            for video_file in tqdm(os.listdir(exercise_path)):
+                if not video_file.endswith(('.mp4', '.avi')):
+                    continue
+                    
+                video_path = os.path.join(exercise_path, video_file)
+                video_data = self.process_video(video_path)
+                
+                if len(video_data) > 0:
+                    dataset.append(video_data)
+                    labels.append(exercise_name)
+        
+        return dataset, labels
