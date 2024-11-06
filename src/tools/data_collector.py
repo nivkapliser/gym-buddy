@@ -18,7 +18,7 @@ class DataCollector:
 
         if results.pose_landmarks:
             landmarks = [[lm.x, lm.y, lm.z] for lm in results.pose_landmarks.landmarks]
-            return np.array(landmarks).flatten
+            return np.array(landmarks).flatten()
         
         return None
     
