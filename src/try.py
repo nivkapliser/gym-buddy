@@ -1,6 +1,6 @@
 from tools.data_collector import DataCollector
 from tools.data_preprocessing import DataPreprocessor, LabelEncoder
-from         models.ml_model import ExerciseModel
+from models.ml_model import ExerciseModel
 from exercise_detector import ExerciseDetector
 import cv2
 import numpy as np
