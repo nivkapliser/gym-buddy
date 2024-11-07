@@ -39,8 +39,8 @@ class ExerciseDetector:
                 exercise_id = np.argmax(prediction)
                 confidence = prediction[exercise_id]
                 
-                if confidence > 0.7:  # Confidence threshold
+                if confidence > 0.9:  # Confidence threshold
                     exercise_name = self.label_encoder.inverse_transform([exercise_id])[0]
                     return exercise_name, confidence
-        
+                
         return None, 0.0
