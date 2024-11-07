@@ -1,6 +1,6 @@
-from .tools.data_collector import DataCollector
-from .tools.data_preprocessing import DataPreprocessor, LabelEncoder
-from .models.ml_model import ExerciseModel
+from tools.data_collector import DataCollector
+from tools.data_preprocessing import DataPreprocessor, LabelEncoder
+from         models.ml_model import ExerciseModel
 from exercise_detector import ExerciseDetector
 import cv2
 import numpy as np
@@ -63,7 +63,7 @@ def run_real_time_detection():
 
 if __name__ == "__main__":
     # First time: train the model
-    model, label_encoder = train_model("C:\Users\user\Desktop\code\projects\gym-buddy\data\exercise_videos")
+    #model, label_encoder = train_model("data\exercise_videos")
     
     # Run real-time detection
     run_real_time_detection()

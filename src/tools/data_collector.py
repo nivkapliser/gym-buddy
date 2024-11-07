@@ -17,7 +17,7 @@ class DataCollector:
         results = self.pose.process(frame_color)
 
         if results.pose_landmarks:
-            landmarks = [[lm.x, lm.y, lm.z] for lm in results.pose_landmarks.landmarks]
+            landmarks = [[lm.x, lm.y, lm.z] for lm in results.pose_landmarks.landmark]
             return np.array(landmarks).flatten()
         
         return None
@@ -38,7 +38,7 @@ class DataCollector:
         cap.release()
         return np.array(frames_data)
 
-    def collect_data(self, data_dir):
+    def collect_dataset(self, data_dir):
         dataset = []
         labels = []
 
