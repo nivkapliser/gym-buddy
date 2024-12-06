@@ -3,7 +3,11 @@ from tools.data_preprocessing import DataPreprocessor, LabelEncoder
 from models.ml_model import ExerciseModel
 from exercise_detector import ExerciseDetector
 import cv2
+import mediapipe as mp
 import numpy as np
+mp_drawing = mp.solutions.drawing_utils
+mp_pose = mp.solutions.pose
+pose = mp_pose.Pose(min_detection_confidence = 0.7, min_tracking_confidence = 0.7)
 
 def train_model(data_dir):
     # Collect data
@@ -39,6 +43,18 @@ def run_real_time_detection():
         ret, frame = cap.read()
         if not ret:
             break
+
+        frame = cv2.flip(frame, 1)
+        rgb_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+        results = pose.process(rgb_frame)
+
+        if results.pose_landmarks:
+            landmarks = results.pose_landmarks.landmark
+
+            # Draw pose landmarks
+            mp_drawing.draw_landmarks(frame, results.pose_landmarks, mp_pose.POSE_CONNECTIONS,
+                                    mp_drawing.DrawingSpec(color=(102, 102, 255), thickness=3, circle_radius=2),
+                                    mp_drawing.DrawingSpec(color=(157, 47, 165), thickness=3, circle_radius=2))
             
         exercise_name, confidence = detector.detect_exercise(frame)
         
@@ -46,12 +62,13 @@ def run_real_time_detection():
             cv2.putText(
                 frame,
                 f"{exercise_name} ({confidence:.2f})",
-                (10, 30),
+                (10, 80),
                 cv2.FONT_HERSHEY_SIMPLEX,
-                1,
-                (0, 255, 0),
-                2
+                3,
+                (0, 0, 0),
+                4
             )
+            # Draw pose landmarks
             
         cv2.imshow('Exercise Detection', frame)
         
