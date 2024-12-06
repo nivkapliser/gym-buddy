@@ -16,7 +16,7 @@ angle_history = deque(maxlen=5)
 
 # Initialize OpenCV for capturing video
 # cap = cv2.VideoCapture(0)  # Set to 0 for webcam
-cap = cv2.VideoCapture('data\exercise_videos\deadlift\deadlift_23.mp4')
+cap = cv2.VideoCapture('squat.mp4')
 
 while cap.isOpened():
     ret, frame = cap.read()
