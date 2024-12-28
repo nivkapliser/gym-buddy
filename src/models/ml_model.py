@@ -1,6 +1,11 @@
 import tensorflow as tf
 from tensorflow.keras.models import Model
 from tensorflow.keras.layers import Input, LSTM, Dropout, Dense
+from sklearn.metrics import classification_report, confusion_matrix, accuracy_score
+import matplotlib.pyplot as plt
+import seaborn as sns
+import numpy as np
+import tensorflow as tf
 
 class ExerciseModel:
     def __init__(self, n_classes, sequence_length, n_features):
@@ -57,62 +62,41 @@ class ExerciseModel:
         )
         
         return model, history
-
-
-
-
-
-# import tensorflow as tf
-# import numpy as np
-# from typing import List, Tuple
-# from sklearn.preprocessing import StandardScaler
-# from  .data_models import Exercise
-
-# class MLModel:
-#     def __init__(self):
-#         self.model = self._build_model()
-#         self.scaler = StandardScaler()
-
-#     def _build_model(self):
-#         model = tf.keras.Sequential([
-#             tf.keras.layers.Dense(128, activation='relu', input_shape=(99,)), # input_shape: 33 landmarks * 3 coordinates (x, y, z)
-#             tf.keras.layers.Dropout(0.3), # for overfitting
-#             tf.keras.layers.Dense(64, activation='relu'),
-#             tf.keras.layers.Dropout(0.2),
-#             tf.keras.layers.Dense(32, activation='relu'),
-#             tf.keras.layers.Dense(3, activation='softmax') # number of neurons = num of exercises, softmax for multimodal classification
-#         ])
-
-#         model.compile(optimizer='adam',
-#                       loss='categorical_crossentropy',
-#                       metrics=['accuracy'])
-        
-#         return model
-
-#     def preprocess_landmarks(self, landmarks) -> np.ndarray:
-#         """Convert landmarks to flat array of coordinates"""
-#         coordinates = []
-#         for landmark in landmarks:
-#             coordinates.extend([landmark.x, landmark.y, landmark.z])
-#         return np.array(coordinates)
     
-#     def train(self, landmarks_data: List[np.ndarray], labels: List[Exercise]): # labels is a list of exercises name
-#         """Train the model on the landmark data"""
-#         X = landmarks_data
-#         X_scaled = self.scaler.fit_transform(X)
 
-#         # One-hot encoding on labels
-#         y = tf.keras.utils.to_categorical([ex.value for ex in labels])
 
-#         self.model.fit(X_scaled, y, epoch=50, validation_split=0.2)
+    # Evaluation Function
+    def evaluate_model(model, X_test, y_test):
+        y_pred = np.argmax(model.predict(X_test), axis=1)
+        y_true = np.argmax(y_test, axis=1)
         
-#     def predict(self, landmarks) -> Tuple[Exercise, float]:
-#         """Predict exercise from landmarks"""
-#         X = self.preprocess_landmarks(landmarks)
-#         X_scaled = self.scaler.transform(X.reshape(1, -1))
+        print("\nClassification Report:\n")
+        print(classification_report(y_true, y_pred))
         
-#         predictions = self.model.predict(X_scaled)[0]
-#         predicted_idx = np.argmax(predictions)
-#         confidence = predictions[predicted_idx]
-        
-#         return Exercise(predicted_idx), confidence
+        # Confusion Matrix
+        conf_matrix = confusion_matrix(y_true, y_pred)
+        plt.figure(figsize=(10, 8))
+        sns.heatmap(conf_matrix, annot=True, fmt='d', cmap='Blues')
+        plt.xlabel('Predicted Label')
+        plt.ylabel('True Label')
+        plt.title('Confusion Matrix')
+        plt.show()
+
+        accuracy = accuracy_score(y_true, y_pred)
+        print(f"Test Accuracy: {accuracy:.4f}")
+
+    # Plot Learning Curves
+    def plot_learning_curves(history):
+        plt.figure(figsize=(12, 6))
+        plt.plot(history.history['accuracy'], label='Training Accuracy')
+        plt.plot(history.history['val_accuracy'], label='Validation Accuracy')
+        plt.plot(history.history['loss'], label='Training Loss')
+        plt.plot(history.history['val_loss'], label='Validation Loss')
+        plt.xlabel('Epochs')
+        plt.ylabel('Metrics')
+        plt.legend()
+        plt.title('Learning Curve')
+        plt.show()
+
+
+

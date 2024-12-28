@@ -27,6 +27,13 @@ def train_model(data_dir):
     
     # Save model and label encoder
     model.save('exercise_model.h5')
+        
+    # Evaluate the model
+    exercise_model.evaluate_model(model, X_test, y_test)
+        
+    # Plot learning curves
+    exercise_model.plot_learning_curves(history)
+
     np.save('label_encoder.npy', preprocessor.label_encoder.classes_)
     
     return model, preprocessor.label_encoder
