@@ -37,7 +37,7 @@ The model leverages a LSTM to analyze temporal patterns in exercise movements, e
 ## Installation
 ```
 # Clone the repository
-git clone https://github.com/yourusername/exercise-recognizer.git
+git clone https://github.com/nivkapliser/gym-buddy.git
 cd exercise-recognizer
 
 # Install dependencies
