@@ -5,45 +5,62 @@ from exercise_detector import ExerciseDetector
 import cv2
 import mediapipe as mp
 import numpy as np
+
+
 mp_drawing = mp.solutions.drawing_utils
 mp_pose = mp.solutions.pose
 pose = mp_pose.Pose(min_detection_confidence = 0.7, min_tracking_confidence = 0.7)
 
-def train_model(data_dir):
+SEQUENCE_LENGTH = 30
+
+def train_model(data_dir: str) -> tuple:
+    """
+        Function to train the exercise recognition model
+        Args:
+            data_dir (str): Path to the directory containing the exercise videos
+        Returns:
+            model (tf.keras.Model): Trained exercise recognition model
+            label_encoder (LabelEncoder): Label encoder object
+    """
     # Collect data
     collector = DataCollector()
     data, labels = collector.collect_dataset(data_dir)
     
-    # Preprocess data
-    preprocessor = DataPreprocessor(sequence_length=30)
+    # Preprocess data for training
+    preprocessor = DataPreprocessor(sequence_length=SEQUENCE_LENGTH)
     X_train, X_test, y_train, y_test = preprocessor.prepare_data(data, labels)
     
-    # Train model
+    # find the number of features and classes
     n_features = X_train.shape[2]
     n_classes = len(np.unique(y_train))
     
-    exercise_model = ExerciseModel(n_classes, sequence_length=30, n_features=n_features)
-    model, history = exercise_model.train(X_train, y_train, X_test, y_test)
+    # Train the model
+    exercise_model = ExerciseModel(n_classes, sequence_length=SEQUENCE_LENGTH, n_features=n_features)
+    model, history = exercise_model.train(X_train, y_train, X_test, y_test) 
     
     # Save model and label encoder
     model.save('exercise_model.h5')
-        
+    np.save('label_encoder.npy', preprocessor.label_encoder.classes_)
+
     # Evaluate the model
     exercise_model.evaluate_model(model, X_test, y_test)
         
     # Plot learning curves
     exercise_model.plot_learning_curves(history)
-
-    np.save('label_encoder.npy', preprocessor.label_encoder.classes_)
     
     return model, preprocessor.label_encoder
 
 def run_real_time_detection():
+    """
+        Function to run real-time exercise detection
+        it detects the exercise being performed by the user in real-time using the webcam
+        and displays the exercise name and confidence on the screen
+    """
     # Load model and label encoder
     label_encoder = LabelEncoder()
     label_encoder.classes_ = np.load('label_encoder.npy')
-    
     detector = ExerciseDetector('exercise_model.h5', label_encoder)
+
     cap = cv2.VideoCapture(0)
     
     while cap.isOpened():

@@ -32,13 +32,13 @@ The model leverages a LSTM to analyze temporal patterns in exercise movements, e
 
 * **Workout/Exercises Video from Kaggle:** Multiple exercises vides taken mainly from Youtube.
 
-* **Train-Validation-Test Split:** 70% training, 15% validation, 15% test.
+* **Train-Test Split:** 80% training, 20% test.
 
 ## Installation
 ```
 # Clone the repository
 git clone https://github.com/nivkapliser/gym-buddy.git
-cd exercise-recognizer
+cd gym-buddy
 
 # Install dependencies
 pip install -r requirements.txt

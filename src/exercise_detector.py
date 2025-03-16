@@ -2,9 +2,13 @@ import cv2
 import mediapipe as mp
 import numpy as np
 import tensorflow as tf
+from typing import Optional
 
 class ExerciseDetector:
-    def __init__(self, model_path, label_encoder, sequence_length=30):
+    """
+        Class to detect the exercise being performed by the user
+    """
+    def __init__(self, model_path: str, label_encoder , sequence_length: int = 30):
         self.mp_pose = mp.solutions.pose
         self.pose = self.mp_pose.Pose(
             min_detection_confidence=0.5,
@@ -15,7 +19,14 @@ class ExerciseDetector:
         self.sequence_length = sequence_length
         self.sequence_buffer = []
         
-    def preprocess_frame(self, frame):
+    def preprocess_frame(self, frame: np.array) -> Optional[np.array]:
+        """
+            Function to preprocess the frame for pose detection
+            Args:
+                frame (np.array): Frame from the webcam
+            Returns:
+                landmarks (np.array): Pose landmarks detected in the frame
+        """
         frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
         results = self.pose.process(frame_rgb)
         
@@ -24,7 +35,15 @@ class ExerciseDetector:
             return np.array(landmarks).flatten()
         return None
     
-    def detect_exercise(self, frame):
+    def detect_exercise(self, frame: np.array) -> tuple[Optional[str], float]:
+        """
+            Function to detect the exercise being performed by the user
+            Args:
+                frame (np.array): Frame from the webcam
+            Returns:
+                exercise_name (str): Name of the exercise being performed
+                confidence (float): Confidence of the model
+        """
         landmarks = self.preprocess_frame(frame)
         
         if landmarks is not None:

@@ -1,3 +1,6 @@
+# this class implements the angle calculation between three points
+# can be used for latter reps counting
+
 import mediapipe as mp
 import numpy as np
 

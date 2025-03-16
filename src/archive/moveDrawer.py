@@ -1,3 +1,5 @@
+# Purpose: Draw lines between consecutive body part positions to visualize movement patterns
+
 import cv2
 import mediapipe as mp
 import numpy as np
