@@ -73,7 +73,7 @@ python exercise_detector.py
 
 * **Robustness:** Performs reliably across varying environments and angles.
 
-##Visualization
+## Visualization
 
 * **Confusion Matrices:** Visualize classification performance for each exercise class.
 
