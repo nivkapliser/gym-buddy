@@ -11,8 +11,8 @@ class ExerciseDetector:
     def __init__(self, model_path: str, label_encoder , sequence_length: int = 30):
         self.mp_pose = mp.solutions.pose
         self.pose = self.mp_pose.Pose(
-            min_detection_confidence=0.5,
-            min_tracking_confidence=0.5
+            min_detection_confidence=0.7,
+            min_tracking_confidence=0.7
         )
         self.model = tf.keras.models.load_model(model_path)
         self.label_encoder = label_encoder

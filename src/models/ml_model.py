@@ -21,7 +21,7 @@ class ExerciseModel:
         x = LSTM(128, return_sequences=True)(input_layer)
         x = Dropout(0.3)(x)
         x = LSTM(64)(x)
-        x = Dropout(0.3)(x)
+        #x = Dropout(0.3)(x)
         
         # Dense layers
         x = Dense(64, activation='relu')(x)

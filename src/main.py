@@ -62,13 +62,24 @@ def run_real_time_detection():
     detector = ExerciseDetector('exercise_model.h5', label_encoder)
 
     cap = cv2.VideoCapture(0)
+    # frame_skip_rate = 3# Skip every 3 frames to speed up the process
+    # frame_counter = 0
     
     while cap.isOpened():
         ret, frame = cap.read()
         if not ret:
             break
 
+        # frame_counter += 1
+        # if frame_counter % frame_skip_rate != 0:
+        #     cv2.imshow('Exercise Detection', frame)
+        #     if cv2.waitKey(1) & 0xFF == ord('q'):
+        #         break
+        #     continue
+
         frame = cv2.flip(frame, 1)
+
+        # Print the pose landmarks
         rgb_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
         results = pose.process(rgb_frame)
 
